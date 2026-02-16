@@ -5,6 +5,8 @@ Conversation-log based reproducibility package for:
 - Scope: **axis-construction stage only** (`start -> axis construction`)
 
 ## What is included
+- `docs/reproducibility_one_page_ja.md`
+  - 提出版の1ページ要約（日本語）
 - `docs/reproducibility_from_chat.md`
   - Full summary of decisions fixed during the chat
   - Repro runbook and troubleshooting notes
