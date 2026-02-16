@@ -54,9 +54,10 @@ python colab_tfds_axis_builder.py \
   --n-ood-cifar 5000 \
   --n-ood-imagenetr 5000 \
   --batch-size 64 \
+  --prompt-template "a photo of {name}" \
   --k-max 4 \
   --alpha-grid 0.5,1.0,2.0,4.0,8.0 \
-  --output-dir /content/outputs/axis_build_k4 \
+  --output-dir /content/outputs/axis_build_4d \
   --quiet
 ```
 
@@ -67,7 +68,7 @@ for s in 42 43 44; do
     --seed $s \
     --n-id 10000 --n-ood-cifar 5000 --n-ood-imagenetr 5000 \
     --batch-size 64 --k-max 4 --alpha-grid 0.5,1.0,2.0,4.0,8.0 \
-    --output-dir /content/outputs/axis_build_k4_s${s} \
+    --output-dir /content/outputs/axis_build_4d_s${s} \
     --quiet
 done
 ```
@@ -75,25 +76,25 @@ done
 ### 5.4 Make figures
 ```bash
 python colab_make_axis_figures.py \
-  --axis-scores /content/outputs/axis_build_k4/axis_scores.csv \
-  --axis-loadings /content/outputs/axis_build_k4/axis_loadings.csv \
-  --cv-table /content/outputs/axis_build_k4/sparsepca_cv_table.csv \
-  --summary-json /content/outputs/axis_build_k4/summary_axis_only.json \
-  --out-dir /content/outputs/axis_build_k4/figs
+  --axis-scores /content/outputs/axis_build_4d/axis_scores.csv \
+  --axis-loadings /content/outputs/axis_build_4d/axis_loadings.csv \
+  --cv-table /content/outputs/axis_build_4d/sparsepca_cv_table.csv \
+  --summary-json /content/outputs/axis_build_4d/summary_axis_only.json \
+  --out-dir /content/outputs/axis_build_4d/figs
 ```
 
 ### 5.5 Detector comparison (A)
 ```bash
 python colab_eval_detectors.py \
-  --axis-scores /content/outputs/axis_build_k4/axis_scores.csv \
-  --sample-metrics /content/outputs/axis_build_k4/sample_metrics.csv \
+  --axis-scores /content/outputs/axis_build_4d/axis_scores.csv \
+  --sample-metrics /content/outputs/axis_build_4d/sample_metrics.csv \
   --out-dir /content/outputs/eval_detectors
 ```
 
 ### 5.6 Quadrant case extraction (B)
 ```bash
 python colab_quadrant_cases.py \
-  --axis-scores /content/outputs/axis_build_k4/axis_scores.csv \
+  --axis-scores /content/outputs/axis_build_4d/axis_scores.csv \
   --out-dir /content/outputs/quadrant_cases \
   --top-n 8
 ```
@@ -103,33 +104,37 @@ python colab_quadrant_cases.py \
 python colab_run_robustness.py \
   --project-dir /content \
   --output-root /content/outputs/robustness \
-  --prompt-templates "a photo of {name}||an image of {name}" \
+  --prompt-templates "a photo of {name}||a close-up photo of {name}" \
   --seeds "42,43,44" \
-  --models "ViT-B-32:laion2b_s34b_b79k"
+  --models "ViT-B-32:laion2b_s34b_b79k||ViT-B-16:laion2b_s34b_b88k"
 ```
 
 ## 6. Key expected results (reference values)
-From the finalized run in the conversation:
-- `k_selected = 4`
-- `alpha_selected = 8.0`
-- axis mapping:
-  - `axis_u_index = 3`
-  - `axis_c_index = 0`
+Latest finalized run (4-variable setting):
+- axis selection:
+  - `k_selected = 3`
+  - `alpha_selected = 1.0`
+  - `axis_u_index = 2`, `axis_c_index = 0`
 - fixed-axis formulas:
-  - `z_u = +0.9187*d_entropy_gain +0.3949*d_oodscore_gain`
-  - `z_c ~= +1.3092*d_conf_drop +0.3783*d_oodscore_gain`
+  - `z_u = +1.0000*d_entropy_gain`
+  - `z_c = +0.7071*d_conf_drop +0.7071*d_oodscore_gain`
 
-Note:
-- The previous 5-variable expression included `d_msp_drop`, but this repo now
-  uses a 4-variable feature vector (`d_conf_drop`, `d_entropy_gain`,
-  `d_energy_gain`, `d_oodscore_gain`).
-- Re-running the pipeline in 4-variable mode may slightly change coefficients.
+A) Detector comparison with 95% bootstrap CI:
+- `energy_single`: AUROC `0.996254` [`0.994955`, `0.997424`], TNR@95 `0.996000` [`0.993021`, `0.998002`]
+- `logistic_2d`: AUROC `0.941065` [`0.934870`, `0.946460`], TNR@95 `0.687000` [`0.649121`, `0.726301`]
+- `linear_svm`: AUROC `0.941045` [`0.934851`, `0.946450`], TNR@95 `0.687333` [`0.647829`, `0.726287`]
+- `zsum_1d`: AUROC `0.907249` [`0.900101`, `0.914356`], TNR@95 `0.598667` [`0.566543`, `0.633346`]
+- `msp_single`: AUROC `0.886241` [`0.878169`, `0.894477`], TNR@95 `0.578000` [`0.540523`, `0.607400`]
 
-Multi-seed stability (cosine similarity to seed42):
-- seed42: `1.000000 / 1.000000`
-- seed43: `0.999998 / 0.999999`
-- seed44: `1.000000 / 1.000000`
-- mean: `0.99999948 / 0.99999983`
+B) Quadrant observations:
+- `Q1(+u,+c)`: `total=8930`, `ood_rate=0.861478`, `fp=778`, `fn=294`
+- `Q2(-u,+c)`: `total=982`, `ood_rate=0.191446`, `fp=7`, `fn=177`
+- `Q3(-u,-c)`: `total=9597`, `ood_rate=0.176305`, `fp=211`, `fn=1062`
+- `Q4(+u,-c)`: `total=491`, `ood_rate=0.869654`, `fp=64`, `fn=0`
+
+C) Robustness (`ViT-B-32`/`ViT-B-16`, seed `42/43/44`, 2 prompts):
+- axis mapping fixed at `axis_u_index=2`, `axis_c_index=0` for all runs.
+- cosine similarities were `1.0` for all reported comparisons.
 
 ## 7. Troubleshooting captured in the session
 - `ModuleNotFoundError: open_clip`
