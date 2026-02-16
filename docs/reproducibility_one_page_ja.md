@@ -76,7 +76,7 @@ python colab/colab_make_axis_figures.py \
 - 軸作成コード: `colab/colab_tfds_axis_builder.py`
 - 図生成コード: `colab/colab_make_axis_figures.py`
 - 詳細手順: `docs/reproducibility_from_chat.md`
-- レポート: `report/N-Axis_Attribution_OoD_2026-02-16.tex` / `.pdf`
+- レポート: `report/N-Axis_Attribution_OoD_2026-02-16.pdf`
 - 図: `report/figs/fig1~fig4_*.png`
 
 ## 7. よくあるエラー

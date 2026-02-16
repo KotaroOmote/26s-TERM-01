@@ -34,8 +34,8 @@ Important incident and resolution:
     SparsePCA CV + 1SE selection, axis fixation.
 - `colab/colab_make_axis_figures.py`
   - Generates 4 key figures from axis outputs.
-- `report/N-Axis_Attribution_OoD_2026-02-16.tex`
-  - Human-readable report with equations, selected settings, stability results.
+- `report/N-Axis_Attribution_OoD_2026-02-16.pdf`
+  - Final report for sharing/review.
 - `report/figs/*.png`
   - Figure artifacts used in the report.
 

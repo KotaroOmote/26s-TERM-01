@@ -14,8 +14,6 @@ Conversation-log based reproducibility package for:
   - TFDS + OpenCLIP + SparsePCA(CV + 1SE) axis builder
 - `colab/colab_make_axis_figures.py`
   - Figure generator (scatter, density, loadings, CV+1SE)
-- `report/N-Axis_Attribution_OoD_2026-02-16.tex`
-  - Report manuscript
 - `report/N-Axis_Attribution_OoD_2026-02-16.pdf`
   - Compiled report with figures
 - `report/figs/`
@@ -28,11 +26,7 @@ Conversation-log based reproducibility package for:
 1. Install dependencies (see `docs/reproducibility_from_chat.md`).
 2. Run `colab/colab_tfds_axis_builder.py` to generate axis outputs.
 3. Run `colab/colab_make_axis_figures.py` to create figures.
-4. Compile report if needed:
-
-```bash
-latexmk -xelatex -interaction=nonstopmode -halt-on-error -file-line-error report/N-Axis_Attribution_OoD_2026-02-16.tex
-```
+4. Use the included PDF report for submission/review.
 
 ## Expected reference outcome
 - Selected model: `k=4`, `alpha=8.0`
