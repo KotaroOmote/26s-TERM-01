@@ -251,27 +251,21 @@ def build_axis_features(df: pd.DataFrame, abstain_threshold: float) -> Tuple[pd.
 
     base = {
         "mean_conf": float(id_base["conf"].mean()),
-        "mean_msp": float(id_base["msp"].mean()),
         "mean_entropy_norm": float(id_base["entropy_norm"].mean()),
         "mean_energy": float(id_base["energy"].mean()),
         "mean_ood_score": float(id_base["ood_score"].mean()),
-        "mean_abstain": float(id_base["abstain"].mean()),
     }
 
     out["d_conf_drop"] = base["mean_conf"] - out["conf"].to_numpy(dtype=float)
-    out["d_msp_drop"] = base["mean_msp"] - out["msp"].to_numpy(dtype=float)
     out["d_entropy_gain"] = out["entropy_norm"].to_numpy(dtype=float) - base["mean_entropy_norm"]
     out["d_energy_gain"] = out["energy"].to_numpy(dtype=float) - base["mean_energy"]
     out["d_oodscore_gain"] = out["ood_score"].to_numpy(dtype=float) - base["mean_ood_score"]
-    out["d_abstain_gain"] = out["abstain"].to_numpy(dtype=float) - base["mean_abstain"]
 
     feature_cols = [
         "d_conf_drop",
-        "d_msp_drop",
         "d_entropy_gain",
         "d_energy_gain",
         "d_oodscore_gain",
-        "d_abstain_gain",
     ]
     return out, feature_cols, base
 
@@ -385,7 +379,7 @@ def fit_final_sparsepca(
 def infer_zu_zc_axes(loadings: np.ndarray, feature_cols: Sequence[str]) -> Dict[str, int]:
     feat_to_idx = {f: i for i, f in enumerate(feature_cols)}
     u_feats = [f for f in ["d_entropy_gain", "d_oodscore_gain", "d_energy_gain"] if f in feat_to_idx]
-    c_feats = [f for f in ["d_conf_drop", "d_msp_drop"] if f in feat_to_idx]
+    c_feats = [f for f in ["d_conf_drop"] if f in feat_to_idx]
 
     abs_load = np.abs(loadings)
     u_scores = np.zeros(loadings.shape[0], dtype=float)

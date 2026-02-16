@@ -27,6 +27,8 @@ Important incident and resolution:
   - Cross-validation reconstruction error (MSE)
   - One-Standard-Error (1SE) rule for conservative model choice
 - Added variance-threshold preprocessing to remove near-constant features.
+- Updated feature design to **4 variables** by dropping `msp`-based delta
+  because `msp` and `conf` are identical in this implementation.
 
 ## 4. Implementation files and roles
 - `colab/colab_tfds_axis_builder.py`
@@ -89,9 +91,13 @@ From the finalized run in the conversation:
   - `axis_c_index = 0`
 - fixed-axis formulas:
   - `z_u = +0.9187*d_entropy_gain +0.3949*d_oodscore_gain`
-  - `z_c = +0.6546*d_conf_drop +0.6546*d_msp_drop +0.3783*d_oodscore_gain`
-  - because `msp == conf` in this implementation:
-    - `z_c ~= +1.3092*d_conf_drop +0.3783*d_oodscore_gain`
+  - `z_c ~= +1.3092*d_conf_drop +0.3783*d_oodscore_gain`
+
+Note:
+- The previous 5-variable expression included `d_msp_drop`, but this repo now
+  uses a 4-variable feature vector (`d_conf_drop`, `d_entropy_gain`,
+  `d_energy_gain`, `d_oodscore_gain`).
+- Re-running the pipeline in 4-variable mode may slightly change coefficients.
 
 Multi-seed stability (cosine similarity to seed42):
 - seed42: `1.000000 / 1.000000`

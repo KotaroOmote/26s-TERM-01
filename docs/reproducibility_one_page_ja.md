@@ -12,7 +12,7 @@
 - 備考: `sun397/tfds` は配布元 404 のため代替として `cifar100` を採用
 
 ## 3. 軸選択の中核仕様
-- 特徴: `conf / msp / entropy / energy / ood_score` から差分特徴を作成
+- 特徴: `conf / entropy / energy / ood_score` から差分特徴を作成（4変数）
 - 前処理: Variance Threshold（定数特徴を除外）
 - 軸抽出: SparsePCA
 - モデル選択: CV再構成誤差（MSE） + **1SEルール**
@@ -65,9 +65,8 @@ python colab/colab_make_axis_figures.py \
 - 軸対応: `axis_u_index = 3`, `axis_c_index = 0`
 - 軸式:
   - `z_u = +0.9187*d_entropy_gain +0.3949*d_oodscore_gain`
-  - `z_c = +0.6546*d_conf_drop +0.6546*d_msp_drop +0.3783*d_oodscore_gain`
-  - 実装上 `msp == conf` なので
-    - `z_c ~= +1.3092*d_conf_drop +0.3783*d_oodscore_gain`
+  - `z_c ~= +1.3092*d_conf_drop +0.3783*d_oodscore_gain`
+- 補足: 以前の5変数版（`msp`含む）から、`msp==conf` のため4変数版へ統一
 - seed安定性（seed42基準の|cos|）
   - `z_u`: 0.99999948
   - `z_c`: 0.99999983

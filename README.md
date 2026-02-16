@@ -30,5 +30,6 @@ Conversation-log based reproducibility package for:
 
 ## Expected reference outcome
 - Selected model: `k=4`, `alpha=8.0`
+- Feature vector: 4 variables (`d_conf_drop`, `d_entropy_gain`, `d_energy_gain`, `d_oodscore_gain`)
 - Stable axis mapping across seeds (`42,43,44`)
 - Final axis formulas documented in report and summary doc
