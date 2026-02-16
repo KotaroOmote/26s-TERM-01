@@ -42,6 +42,7 @@ class RunConfig:
     device: str = "cuda"
     model_name: str = "ViT-B-32"
     pretrained: str = "laion2b_s34b_b79k"
+    prompt_template: str = "a photo of {name}"
     output_dir: str = "/content/outputs/axis_build"
     abstain_threshold: float = 0.45
     var_threshold: float = 1e-10
@@ -183,9 +184,15 @@ def run_openclip_metrics(
     preprocess,
     tokenizer,
     device: str,
+    prompt_template: str = "a photo of {name}",
     quiet: bool = False,
 ) -> pd.DataFrame:
-    prompts = [f"a photo of {name}" for name in label_names]
+    prompts: List[str] = []
+    for name in label_names:
+        if "{name}" in prompt_template:
+            prompts.append(prompt_template.format(name=name))
+        else:
+            prompts.append(prompt_template.format(name))
     with torch.no_grad():
         tok = tokenizer(prompts).to(device)
         text_feat = model.encode_text(tok)
@@ -435,6 +442,7 @@ def run(cfg: RunConfig) -> Dict[str, object]:
         preprocess=preprocess,
         tokenizer=tokenizer,
         device=device,
+        prompt_template=cfg.prompt_template,
         quiet=cfg.quiet,
     )
     df_ood_cifar = run_openclip_metrics(
@@ -449,6 +457,7 @@ def run(cfg: RunConfig) -> Dict[str, object]:
         preprocess=preprocess,
         tokenizer=tokenizer,
         device=device,
+        prompt_template=cfg.prompt_template,
         quiet=cfg.quiet,
     )
     df_ood_imr = run_openclip_metrics(
@@ -463,6 +472,7 @@ def run(cfg: RunConfig) -> Dict[str, object]:
         preprocess=preprocess,
         tokenizer=tokenizer,
         device=device,
+        prompt_template=cfg.prompt_template,
         quiet=cfg.quiet,
     )
 
@@ -504,8 +514,15 @@ def run(cfg: RunConfig) -> Dict[str, object]:
     load_df.to_csv(out_dir / "axis_loadings.csv", index=False)
 
     score_df = pd.DataFrame(Z, columns=[f"axis_{i}" for i in range(Z.shape[1])])
+    score_df["sample_id"] = feat_df["sample_id"].to_numpy(dtype=int)
     score_df["is_ood"] = y
     score_df["source"] = feat_df["source"].to_numpy()
+    score_df["conf"] = feat_df["conf"].to_numpy(dtype=float)
+    score_df["msp"] = feat_df["msp"].to_numpy(dtype=float)
+    score_df["entropy"] = feat_df["entropy"].to_numpy(dtype=float)
+    score_df["energy"] = feat_df["energy"].to_numpy(dtype=float)
+    score_df["ood_score"] = feat_df["ood_score"].to_numpy(dtype=float)
+    score_df["correct"] = feat_df["correct"].to_numpy()
     score_df["z_u"] = score_df[f"axis_{mapping['axis_u_index']}"]
     score_df["z_c"] = score_df[f"axis_{mapping['axis_c_index']}"]
     score_df.to_csv(out_dir / "axis_scores.csv", index=False)
@@ -529,6 +546,7 @@ def run(cfg: RunConfig) -> Dict[str, object]:
             "device": device,
             "model_name": cfg.model_name,
             "pretrained": cfg.pretrained,
+            "prompt_template": cfg.prompt_template,
             "quiet": cfg.quiet,
         },
         "baseline_id_means": baseline,
@@ -559,6 +577,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--device", type=str, default="cuda")
     p.add_argument("--model-name", type=str, default="ViT-B-32")
     p.add_argument("--pretrained", type=str, default="laion2b_s34b_b79k")
+    p.add_argument("--prompt-template", type=str, default="a photo of {name}")
     p.add_argument("--output-dir", type=str, default="/content/outputs/axis_build")
     p.add_argument("--abstain-threshold", type=float, default=0.45)
     p.add_argument("--var-threshold", type=float, default=1e-10)
@@ -582,6 +601,7 @@ def main() -> None:
         device=args.device,
         model_name=args.model_name,
         pretrained=args.pretrained,
+        prompt_template=args.prompt_template,
         output_dir=args.output_dir,
         abstain_threshold=args.abstain_threshold,
         var_threshold=args.var_threshold,

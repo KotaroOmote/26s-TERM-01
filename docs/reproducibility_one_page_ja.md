@@ -67,6 +67,7 @@ python colab/colab_make_axis_figures.py \
   - `z_u = +0.9187*d_entropy_gain +0.3949*d_oodscore_gain`
   - `z_c ~= +1.3092*d_conf_drop +0.3783*d_oodscore_gain`
 - 補足: 以前の5変数版（`msp`含む）から、`msp==conf` のため4変数版へ統一
+- 注意: 4変数化後は再実行して係数を再確定すること（上記は会話時点の参照値）
 - seed安定性（seed42基準の|cos|）
   - `z_u`: 0.99999948
   - `z_c`: 0.99999983
@@ -85,3 +86,30 @@ python colab/colab_make_axis_figures.py \
   - `--quiet` とログリダイレクトを併用
 - TeX式エラー（`k^*`）:
   - `k^{\ast}` を使用
+
+## 8. 次フェーズ検証（A/B/C）
+### A) 判定性能比較
+```bash
+python colab/colab_eval_detectors.py \
+  --axis-scores /content/outputs/axis_build_k4/axis_scores.csv \
+  --sample-metrics /content/outputs/axis_build_k4/sample_metrics.csv \
+  --out-dir /content/outputs/eval_detectors
+```
+
+### B) 四象限代表誤分類の抽出
+```bash
+python colab/colab_quadrant_cases.py \
+  --axis-scores /content/outputs/axis_build_k4/axis_scores.csv \
+  --out-dir /content/outputs/quadrant_cases \
+  --top-n 8
+```
+
+### C) ロバスト性（プロンプト・分割・別VLM）
+```bash
+python colab/colab_run_robustness.py \
+  --project-dir /content \
+  --output-root /content/outputs/robustness \
+  --prompt-templates "a photo of {name}||an image of {name}" \
+  --seeds "42,43,44" \
+  --models "ViT-B-32:laion2b_s34b_b79k"
+```

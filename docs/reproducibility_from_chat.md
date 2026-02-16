@@ -82,6 +82,32 @@ python colab_make_axis_figures.py \
   --out-dir /content/outputs/axis_build_k4/figs
 ```
 
+### 5.5 Detector comparison (A)
+```bash
+python colab_eval_detectors.py \
+  --axis-scores /content/outputs/axis_build_k4/axis_scores.csv \
+  --sample-metrics /content/outputs/axis_build_k4/sample_metrics.csv \
+  --out-dir /content/outputs/eval_detectors
+```
+
+### 5.6 Quadrant case extraction (B)
+```bash
+python colab_quadrant_cases.py \
+  --axis-scores /content/outputs/axis_build_k4/axis_scores.csv \
+  --out-dir /content/outputs/quadrant_cases \
+  --top-n 8
+```
+
+### 5.7 Robustness runner (C)
+```bash
+python colab_run_robustness.py \
+  --project-dir /content \
+  --output-root /content/outputs/robustness \
+  --prompt-templates "a photo of {name}||an image of {name}" \
+  --seeds "42,43,44" \
+  --models "ViT-B-32:laion2b_s34b_b79k"
+```
+
 ## 6. Key expected results (reference values)
 From the finalized run in the conversation:
 - `k_selected = 4`
