@@ -1,7 +1,8 @@
 # 26s-TERM-01
 
 Conversation-log based reproducibility package for:
-- **N-Axis Attribution OoD (2026-02-16)**
+- **Attribution-OoD Axes for VLMs**
+- 推論ログに基づく二次元Attribution-OoD 軸とOoD 検知性能の解析
 - Scope: **axis-construction stage only** (`start -> axis construction`)
 
 ## What is included
