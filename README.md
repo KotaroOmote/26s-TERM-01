@@ -16,6 +16,8 @@ Conversation-log based reproducibility package for:
   - TFDS + OpenCLIP + SparsePCA(CV + 1SE) axis builder
 - `colab/colab_make_axis_figures.py`
   - Figure generator (scatter, density, loadings, CV+1SE)
+- `colab/colab_make_statistics_figures.py`
+  - Statistical report generator (3 tables + 10 figures)
 - `colab/colab_eval_detectors.py`
   - (A) AUROC/TNR@95 comparison on `(z_u, z_c)` vs MSP/energy
 - `colab/colab_quadrant_cases.py`
@@ -38,7 +40,8 @@ Conversation-log based reproducibility package for:
    - `colab/colab_eval_detectors.py`
    - `colab/colab_quadrant_cases.py`
    - `colab/colab_run_robustness.py`
-5. See `docs/experiment_update_2026-02-16.md` for the latest validated metrics.
+5. Run `colab/colab_make_statistics_figures.py` for statistical tables + 10 publication figures.
+6. See `docs/experiment_update_2026-02-16.md` for the latest validated metrics.
 
 ## Latest reference outcome (2026-02-16, 4-variable setting)
 - Axis selection:

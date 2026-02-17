@@ -109,6 +109,22 @@ python colab_run_robustness.py \
   --models "ViT-B-32:laion2b_s34b_b79k||ViT-B-16:laion2b_s34b_b88k"
 ```
 
+### 5.8 Statistical tables + 10 figures
+```bash
+python colab_make_statistics_figures.py \
+  --axis-dir /content/outputs/axis_build_4d \
+  --out-dir /content/outputs/stats_figs_2026-02-16_v3 \
+  --test-size 0.30 \
+  --seed 42 \
+  --bootstrap 800
+```
+
+Main outputs:
+- `table_model_performance.csv`
+- `table_feature_significance.csv`
+- `table_quadrant_errors.csv`
+- `fig01_perf_ci_bar.png` ... `fig10_effect_size_forest.png`
+
 ## 6. Key expected results (reference values)
 Latest finalized run (4-variable setting):
 - axis selection:

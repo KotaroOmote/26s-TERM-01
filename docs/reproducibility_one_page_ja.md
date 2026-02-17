@@ -121,3 +121,13 @@ python colab/colab_run_robustness.py \
   --seeds "42,43,44" \
   --models "ViT-B-32:laion2b_s34b_b79k||ViT-B-16:laion2b_s34b_b88k"
 ```
+
+### D) 統計表 + 10グラフ生成
+```bash
+python colab/colab_make_statistics_figures.py \
+  --axis-dir /content/outputs/axis_build_4d \
+  --out-dir /content/outputs/stats_figs_2026-02-16_v3 \
+  --test-size 0.30 \
+  --seed 42 \
+  --bootstrap 800
+```
