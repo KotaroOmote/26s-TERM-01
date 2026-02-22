@@ -1,0 +1,14 @@
+{
+  "period": {
+    "start_date": "2024-01-01",
+    "end_date": "2025-12-31"
+  },
+  "data": {
+    "cache_dir": "./cache",
+    "outputs_subdir": "fujisawa_demo"
+  },
+  "model": {
+    "lookback_weeks": 7,
+    "garch_forecast_horizon": 8
+  }
+}
