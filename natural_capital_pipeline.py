@@ -141,7 +141,7 @@ def build_natural_capital_index(
 
     ret = np.zeros(len(score), dtype=np.float64)
     if len(score) > 1:
-        ret[1:] = np.clip(0.08 * np.diff(score), -0.3, 0.3)
+        ret[1:] = np.clip(0.030183 * np.diff(score), -0.133621, 0.133621)
 
     idx = np.zeros(len(score), dtype=np.float64)
     idx[0] = 100.0
@@ -267,7 +267,7 @@ def run_modeling_from_data(
     idx_rows = idx_pack["rows"]
 
     returns = np.array([r["ecological_return"] for r in idx_rows], dtype=np.float64)
-    garch = Garch11().fit(returns)
+    garch = Garch11(alpha=0.176670, beta=0.700321).fit(returns)
     garch_fore = Garch11.forecast(garch, cfg.model.garch_forecast_horizon)
 
     tf_like_fore = np.full(
